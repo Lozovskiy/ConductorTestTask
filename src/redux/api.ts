@@ -1,11 +1,10 @@
 import { SagaIterator } from "redux-saga";
-import { call, select, put } from "redux-saga/effects";
+import { call } from "redux-saga/effects";
 
 export function* callApi(endpoint: string, data?: object, method: string = "GET", headers: object = {}): SagaIterator {
   try {
-
     if (!(data instanceof FormData)) {
-      Object.assign(headers, { "Content-Type": "application/json" });
+      Object.assign(headers, { "Content-Type": "application/vnd.github.v3+json" });
     }
 
     const request = {
@@ -23,7 +22,10 @@ export function* callApi(endpoint: string, data?: object, method: string = "GET"
 
     const responseData = yield responsePromise.json();
 
-    return responseData.payload.data;
+    if (responsePromise.status >= 400) {
+      throw new Error(responseData.message);
+    }
+    return responseData;
   } catch (error) {
     throw error;
   }

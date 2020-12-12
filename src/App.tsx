@@ -8,7 +8,6 @@ import store, { persistor } from "redux/store";
 import history from "redux/history";
 import RootRouter from "routes/RootRouter/RootRouter";
 
-
 function App() {
   return (
     <Provider store={store}>

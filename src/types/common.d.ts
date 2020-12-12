@@ -1,3 +1,16 @@
+export type UserListItemType = {
+  id: number;
+  avatar_url: string;
+  login: string;
+};
+
+export type UserType = {};
+
+export type SearchUserResponseType = {
+  total_count: number;
+  incomplete_results: boolean;
+  items: UserListItemType[];
+};
 
 // Helpers
 export type ActionType = {
