@@ -1,0 +1,20 @@
+@import "fonts";
+@import "variables";
+@import "reset";
+@import "semanticOverrides";
+
+body {
+  overflow-y: scroll;
+  color: #000;
+  letter-spacing: 0.1em;
+  font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+body ::-webkit-scrollbar-track {
+  background: none;
+}
+
+#root {
+  min-height: 100vh;
+  overflow: hidden;
+}

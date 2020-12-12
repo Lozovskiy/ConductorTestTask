@@ -1,0 +1,16 @@
+@import "./variables";
+
+@mixin h1 {
+  line-height: 1;
+  font-size: $h1-font-size;
+}
+
+@mixin h2 {
+  line-height: 1;
+  font-size: $h2-font-size;
+}
+
+@mixin paragraph {
+  line-height: 1.2;
+  font-size: $paragraph-font-size;
+}
