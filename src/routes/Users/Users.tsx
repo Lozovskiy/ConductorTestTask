@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Store } from "redux";
 
 import { fetchUsers, selectUsersEntities, selectUsersError, selectUsersIsFetching } from "ducks/users";
-import { ActionType, ErrorType, SearchUserResponseType } from "types/common";
+import { ActionType, ErrorType, SearchResponseType, UserListItemType } from "types/common";
 import UsersList from "components/UsersList/UsersList";
 
 import styles from "./Users.module.scss";
@@ -14,7 +14,7 @@ interface Props {
   usersIsFetching: boolean;
   error: ErrorType | null;
   fetchUsers: (payload: string) => ActionType;
-  userEntities: SearchUserResponseType | null;
+  userEntities: SearchResponseType<UserListItemType> | null;
 }
 
 interface State {

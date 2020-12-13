@@ -1,0 +1,35 @@
+@import "../../styles/fonts";
+
+.root {
+  position: relative;
+  min-height: 100vh;
+}
+
+.contentWrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.repoContainer {
+  padding-left: 20px;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.buttonContainer {
+  padding: 20px 0 0 0;
+}
+
+.placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 50px;
+  color: rgba(0, 0, 0, 0.3);
+  @include h1;
+  text-align: center;
+}

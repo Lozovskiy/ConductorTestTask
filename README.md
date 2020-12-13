@@ -1,46 +1,253 @@
-# Getting Started with Create React App
+# Conductor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Test task
 
-## Available Scripts
+##### What's Being Used?
 
-In the project directory, you can run:
+- [React](http://facebook.github.io/react/) for managing the presentation logic of your application.
+- [Redux](http://redux.js.org/) for generating and managing your state model.
+- [CSS modules](https://github.com/css-modules/css-modules) + [Semantic UI](https://react.semantic-ui.com/introduction) for stylesheet compilation.
+- [TypeScript](https://www.typescriptlang.org/docs/handbook/react-&-webpack.html) to support type checking.
+- [WebPack](http://webpack.github.io/) for bundling code down to a single file and enabling hot module reloading.
+- [Create React App](https://github.com/facebook/create-react-app) for project initial build.
+- [Redux Form](https://redux-form.com/) for form handling.
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+In order to get started developing, you'll need to do a few things first.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+[1]. Install all of the `node_modules` required for the package. Depending on your computer's configuration, you may need to prefix this command with a `sudo`.
 
-### `npm test`
+```
+npm install
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+or
 
-### `npm run build`
+```
+sudo npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+[2]. Lastly, run the start command to get the project off the ground. This command will build your JS files using the Webpack `dev-server`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+npm run start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[3]. Head over to [http://localhost:3000](http://localhost:3000) to see your app.
 
-### `npm run eject`
+## File Structure is build by [Ducks: Redux Reducer Bundles](https://github.com/erikras/ducks-modular-redux)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### build/
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This is where your application will be compiled. Assets, like images and fonts, should be placed directly within this folder. Also in this folder is a default `index.html` file for serving up the application.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### src/
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The client folder houses the client application for your project. This is where your client-side Javascript components (and their directly accompanying styles) live.
 
-## Learn More
+## App Components
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Actions
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+These are your typical Redux action creators.
+You need to name data - `payload` in any causes except error
+
+```typescript
+export function formSubmitSignIn(
+  payload: FormSubmitActionPayloadType<FormSignInDataType>
+) {
+  return {
+    payload,
+    type: FORM_SUBMIT_SIGN_IN
+  };
+}
+
+export function fetchSignIn(payload: FormSignInDataType) {
+  return {
+    payload,
+    type: FETCH_SIGN_IN_REQUEST
+  };
+}
+
+export function fetchSignInSuccess(payload: LoginPayload) {
+  return {
+    payload,
+    type: FETCH_SIGN_IN_SUCCESS
+  };
+}
+
+export function fetchSignInFailure(error: ErrorType) {
+  return {
+    error,
+    type: FETCH_SIGN_IN_FAILURE
+  };
+}
+```
+
+### Components
+
+Here is typical component.
+Use TS for define your types.
+
+```typescript jsx
+import cn from "classnames";
+import * as React from "react";
+import * as Semantic from "semantic-ui-react";
+import "./Button.scss";
+
+export interface IButtonProps extends Semantic.ButtonProps {
+  children: React.ReactNode;
+  size?: "small" | "big";
+  template?: "primary" | "secondary";
+}
+
+function Button(props: IButtonProps): JSX.Element {
+  const { children, template, ...rest } = props;
+
+  const classes = cn("semantic-button", `template--${template}`);
+
+  return (
+    <Semantic.Button {...rest} className={classes}>
+      {children}
+    </Semantic.Button>
+  );
+}
+
+Button.defaultProps = {
+  size: "big",
+  template: "primary"
+};
+
+export default Button;
+```
+
+#### For middleware we use ReduxSaga
+
+
+```typescript
+function* fetchTranslatesSaga({ payload }: ActionType): SagaIterator {
+  try {
+    const response = yield call(ApiFetchTranslates, payload.locale);
+
+    yield put(fetchTranslatesSucces(response.translates));
+  } catch (error) {
+    yield put(fetchTranslatesError(error));
+  }
+}
+```
+
+Dont forget to combine all sagas and spawn them in root saga `src/redux/saga.ts` 
+
+```typescript
+export const saga = function* () {
+  yield all([takeEvery(FETCH_REPOS_REQUEST, fetchReposSaga)]);
+};
+```
+
+#### API request
+```typescript
+function* ApiFetchLinkClicks(payload: { id: string; dates: { size: number; to: string } }) {
+  return yield call(
+    callApi,
+    API_URI + `/bitlinks/${payload.id}/clicks?units=${payload.dates.size}&unit_reference=${payload.dates.to}`
+  );
+}
+```
+
+### Reducers
+
+Your Redux reducers that will generate your state model.
+
+We use `switch` in reducer.
+
+Also we use `isFetching` for knowing current state of this branch.
+
+Don't forget to add it to root reducer in `src/redux/reducer.ts`
+
+```typescript
+interface State {
+  error: string | null;
+  isFetching: boolean;
+  entities: Translation | null;
+}
+
+const initialState: State = {
+  entities: null,
+  error: null,
+  isFetched: false,
+  isFetching: false
+};
+
+export default function reducer(
+  state: State = initialState,
+  action: ActionType
+) {
+  const { type, payload, error } = action;
+
+  switch (type) {
+    case FETCH_TRANSLATES_REQUEST:
+      return Object.assign({}, state, {
+        error: null,
+        isFetching: true
+      });
+    case FETCH_TRANSLATES_SUCCESS:
+      return Object.assign({}, state, {
+        entities: {
+          ...payload,
+          data: arrayToSimpleHashMap(payload.data, "source", "target")
+        },
+        error: null,
+        isFetching: false
+      });
+    case FETCH_TRANSLATES_FAILURE:
+      return Object.assign({}, state, {
+        error,
+        isFetching: false
+      });
+
+    default:
+      return state;
+  }
+}
+```
+
+### Constants
+
+We use `${appName}/${moduleName}` as prefix for all events:
+
+```typescript
+export const moduleName = "dictLocales";
+const prefix = `${appName}/${moduleName}`;
+export const FETCH_DICT_LOCALES_REQUEST = `${prefix}/FETCH_DICT_LOCALES_REQUEST`;
+export const FETCH_DICT_LOCALES_SUCCESS = `${prefix}/FETCH_DICT_LOCALES_SUCCESS`;
+export const FETCH_DICT_LOCALES_FAILURE = `${prefix}/FETCH_DICT_LOCALES_FAILURE`;
+```
+
+### Selectors
+
+It`s important to use selectors when you whant to pass any data from store to your component, even when you need to normalise it:
+
+```typescript
+const stateSelector = state => state[moduleName];
+export const selectLocales = createSelector(
+  stateSelector,
+  state => state.locales
+);
+export const selectLocalesForOptionsList = createSelector(
+  selectLocales,
+  locales =>
+    !!locales
+      ? map(locales, ({ label, id }) => {
+          return {
+            text: id.toUpperCase(),
+            value: id
+          };
+        })
+      : []
+);
+```
+
+## UI
+
+### [Semantic UI](https://react.semantic-ui.com/introduction)

@@ -1,5 +1,5 @@
 import { API_URI, appName } from "utils/constants";
-import { ActionType, ErrorType, SearchUserResponseType } from "types/common";
+import { ActionType, ErrorType, SearchResponseType, UserListItemType } from "types/common";
 import { Store } from "redux";
 import { SagaIterator } from "redux-saga";
 import { createSelector } from "reselect";
@@ -21,7 +21,7 @@ export const FETCH_USERS_FAILURE = `${prefix}/FETCH_USERS_FAILURE`;
 interface State {
   error: ErrorType | null;
   isFetching: boolean;
-  entities: SearchUserResponseType | null;
+  entities: SearchResponseType<UserListItemType> | null;
 }
 
 const initialState: State = {
@@ -76,7 +76,7 @@ export function fetchUsers(payload: string) {
     type: FETCH_USERS_REQUEST,
   };
 }
-export function fetchUsersSuccess(payload: SearchUserResponseType[]) {
+export function fetchUsersSuccess(payload: SearchResponseType<UserListItemType>) {
   return {
     payload,
     type: FETCH_USERS_SUCCESS,

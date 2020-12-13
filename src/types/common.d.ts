@@ -4,13 +4,33 @@ export type UserListItemType = {
   login: string;
 };
 
-export type UserType = {};
+export type UserType = {
+  avatar_url: string;
+  name: string;
+  location: string | null;
+  bio: string | null;
+  email: string | null;
+  followers: number;
+};
 
-export type SearchUserResponseType = {
+export type SearchResponseType<T> = {
   total_count: number;
   incomplete_results: boolean;
-  items: UserListItemType[];
+  items: T[];
 };
+
+export type ReposType = {
+  name: string;
+  description: string | null;
+  fork: boolean;
+  stargazers_count: number
+  forks: number
+}
+
+export type RepoSearchArgumentsType = {
+  user: string,
+  query?: string
+}
 
 // Helpers
 export type ActionType = {
