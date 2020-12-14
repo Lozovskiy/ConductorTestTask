@@ -11,7 +11,7 @@ interface Props {
 function ReposList(props: Props) {
   const renderRepoInfo = () => {
     return props.repos.map((item) => (
-      <Table.Row>
+      <Table.Row key={item.id}>
         <Table.Cell>{item.name}</Table.Cell>
         <Table.Cell>{item.description}</Table.Cell>
         <Table.Cell>{item.fork ? "Yes" : "No"}</Table.Cell>

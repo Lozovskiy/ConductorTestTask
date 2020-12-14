@@ -20,6 +20,7 @@ export type SearchResponseType<T> = {
 };
 
 export type ReposType = {
+  id: number;
   name: string;
   description: string | null;
   fork: boolean;
